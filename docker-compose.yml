@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:latest
+    environment:
+      - MYSQL_DATABASE=fisdom
+      - MYSQL_USER=fisdom
+      - MYSQL_PASSWORD=fisdom
+      - MYSQL_PASSWORD=fisdom
+    networks:
+      - main
+    volumes:
+      - mysql-data:/var/lib/mysql/
+  redis:
+    image: "redis:alpine"
+    networks:
+      - main
+  web:
+    build: .
+    command: bash -c "python /code/manage.py migrate --noinput && python /code/manage.py runserver 0.0.0.0:8001"
+    volumes:
+      - .:/code
+    ports:
+      - "8001:8001"
+    networks:
+      - main
+    depends_on:
+      - db
+      - redis
+  celery:
+    build: .
+    command: celery -A fisdom worker -l info
+    volumes:
+      - .:/code
+    networks:
+      - main
+    depends_on:
+      - db
+      - redis
+  celery-beat:
+    build: .
+    command: celery -A fisdom beat --pidfile= -l info
+    volumes:
+      - .:/code
+    networks:
+      - main
+    depends_on:
+      - db
+      - redis
+
+networks:
+  main:
+
+volumes:
+  mysql-data:

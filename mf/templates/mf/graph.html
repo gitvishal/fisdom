@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}GRaph{% endblock %}
+{% block extraheader %}
+	<!--[if lte IE 8]>
+		<script src="{% static 'js/excanvas.js' %}"></script>
+	<![endif]-->
+
+{% endblock %}
+{% block content %}
+	<h1>ISIN:{{object.isin}}</h1>
+	<h1>Mutual Fund Name:{{object.name}}</h1>
+	<canvas id="myChart" width="500" height="400"></canvas>
+
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+	<script type="text/javascript">
+		$.get('{% url "mf:line_chart_json" object.pk %}', function(data) {
+			var ctx = $("#myChart").get(0).getContext("2d");
+			new Chart(ctx, {type: 'line', data: data});
+		});
+    </script>
+{% endblock %}

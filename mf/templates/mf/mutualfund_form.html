@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create ISIN{% endblock %}
+
+{% block content %}
+	<form method="post">
+		{{ form.as_p }}
+		{% csrf_token %}
+		<input type="submit" name="Create ISIN">
+	</form>
+	<br>
+	{% if isin_data%}
+		<p>status: {{isin_data.status_code}}</p>
+		<p>message: {{isin_data.result.error|default:'-'}}</p>
+	{% endif %}
+{% endblock %}
