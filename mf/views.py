@@ -26,13 +26,13 @@ class LineChartJSONView(BaseLineChartView):
 		return super().get(*args, **kwargs)
 
 	def get_labels(self):
-		return self.object.mutualfundprice_mf.values_list('date', flat=True)
+		return [str(x.date()) for x in self.object.mutualfundprice_mf.values_list('date', flat=True)]
 
 	def get_providers(self):
 		return [str(self.object,)]
 
 	def get_data(self):
-	    return [self.object.mutualfundprice_mf.values_list('price', flat=True),]
+		return [[str(x) for x in self.object.mutualfundprice_mf.values_list('price', flat=True)],]
 
 class LineChartView(DetailView):
 	template_name = 'mf/graph.html'

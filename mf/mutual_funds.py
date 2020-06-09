@@ -1,6 +1,7 @@
 from django.db import transaction
 from django.utils import timezone
 from .models import MutualFundPrice
+import datetime
 import requests
 
 def get_mutual_data(isin):
@@ -19,7 +20,7 @@ def mutual_funds_price_update(mf, mutual_data=None):
 				mf.name = name
 				mf.save(update_fields=['name'])
 				for epoch, price in graph_data_for_amfi:
-					date = timezone.datetime.fromtimestamp(epoch/10)
+					date = datetime.datetime.utcfromtimestamp(float(epoch)/1000.)
 					MutualFundPrice.objects.update_or_create(date=date, mutual_fund=mf, defaults={'price':price})
 	except Exception as e:
 		print(e)
