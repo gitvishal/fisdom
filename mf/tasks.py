@@ -33,8 +33,8 @@ def mf():
 def mutual_price_all(mutual_fund):
 	return group(update_or_create_mfprice.s(mf) for mf in mutual_fund.iterator())()
 
-@periodic_task(run_every=crontab(minute=0, hour='*/12'))
+@periodic_task(run_every=crontab())
 def schedule_task():
-	return (tasks.mf.s() | tasks.mutual_price_all.s())()
+	return (mf.s() | mutual_price_all.s())()
 
 # (mf.s() | group(update_or_create_mfprice.s(mf) for mf in MutualFund.objects.iterator()))()
